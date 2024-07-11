@@ -1,0 +1,36 @@
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const { Server } = require("socket.io");
+const socketHandler = require("./handlers/socketHandler");
+const handleRoutes = require("./routes/index");
+
+require("dotenv").config();
+
+const app = express();
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(handleRoutes);
+
+const server = require("http").createServer(app);
+const io = new Server(server, {
+  cors: true,
+});
+
+const emailToSocketId = new Map();
+const socketIdToEmail = new Map();
+
+io.on("connection", (socket) => {
+  console.log("socket connected: ", socket.id);
+  socketHandler(io, socket, emailToSocketId, socketIdToEmail);
+});
+
+server.listen(process.env.PORT, () => console.log("server running!!"));
