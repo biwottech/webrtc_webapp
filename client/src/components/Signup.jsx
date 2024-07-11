@@ -29,7 +29,7 @@ export default function Signup() {
     e.preventDefault();
     const { data } = await axios.post(`/api/signup`, signupDetails);
     if (data.success === true) {
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data));
       auth.setUser(data.userId);
     } else {
       console.log(data);

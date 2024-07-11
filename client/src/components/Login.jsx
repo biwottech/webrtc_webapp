@@ -23,8 +23,9 @@ export default function Login() {
     e.preventDefault();
     const { data } = await axios.post(`/api/login`, loginDetails);
     if (data.success === true) {
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data));
       auth.setUser(data.userId);
+      console.log('auth', auth)
       navigate("/lobby");
     } else {
       console.log(data);
